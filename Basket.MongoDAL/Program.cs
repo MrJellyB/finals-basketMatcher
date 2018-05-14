@@ -26,7 +26,7 @@ namespace Basket.ServerSide
             List<CategoryDTO> category = db.GetAllCategoriesDTO();
             List<CityDTO> cities = db.GetAllCitiesDTO();
             UserDTO user = db.GetUserDTOByUserName("liormiz");
-            List<UserDTO> users = db.GetAllUsersDTO();
+            List<UserDTO> users = db.GetAllUsersDTO(); //test
         }
     }
 }
