@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "finals-basketMatch", "Baske
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basket.MongoDAL", "Basket.MongoDAL\Basket.MongoDAL.csproj", "{6419E0BE-D04C-4579-B70C-9CE0D9F3A817}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basket.Match.BL.Tests", "Basket.Match.BL.Tests\Basket.Match.BL.Tests.csproj", "{C4227415-66F5-4890-8228-0089EEF37EBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6419E0BE-D04C-4579-B70C-9CE0D9F3A817}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6419E0BE-D04C-4579-B70C-9CE0D9F3A817}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6419E0BE-D04C-4579-B70C-9CE0D9F3A817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4227415-66F5-4890-8228-0089EEF37EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4227415-66F5-4890-8228-0089EEF37EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4227415-66F5-4890-8228-0089EEF37EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4227415-66F5-4890-8228-0089EEF37EBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
