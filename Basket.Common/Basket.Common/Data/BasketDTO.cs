@@ -38,8 +38,8 @@ namespace Basket.Common.Data
         [BsonRepresentation(BsonType.ObjectId)]
         public string _id { get; set; }
 
-        [BsonRepresentation(BsonType.Double, AllowTruncation = true)]
-        public double id { get; set; }
+        [BsonRepresentation(BsonType.Int64, AllowTruncation = true)]
+        public long id { get; set; }
         
         public string name { get; set; }
         

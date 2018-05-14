@@ -3,44 +3,41 @@
 namespace Basket.Common.Attribute
 {
 
-    public interface ICriteria
+    public class GeneralAttribute : System.Attribute
     {
-        #region Methods
-
-        float Calculate();
-
-        #endregion
-    }
-
-    public class GeneralAttribute : System.Attribute, ICriteria
-    {
-        public float Calculate()
+        public virtual float Val(object val)
         {
-            throw new NotImplementedException();
+            return (val == null) ? 1f : 0f;
         }
     }
 
-    public class PriceAttribute : GeneralAttribute, ICriteria
+    public class PriceAttribute : GeneralAttribute
     {
-        public float Calculate()
+        public override float Val(object val)
         {
-            throw new NotImplementedException();
+            float toReturn = (float)val;
+            // I know this is stupid, its just for the 
+            // clean iteration in PopulateMatrix in BasketListGenome
+            return toReturn;
         }
     }
 
-    public class GlutenFreeAttribute : GeneralAttribute, ICriteria
+    public class GlutenFreeAttribute : GeneralAttribute
     {
-        public float Calculate()
-        {
-            throw new NotImplementedException();
-        }
+        //public override float Val(object val)
+        //{
+        //    float toReturn = (bool)val;
+        //    // I know this is stupid, its just for the 
+        //    // clean iteration in PopulateMatrix in BasketListGenome
+        //    return toReturn.;
+        //}
     }
 
-    public class OrganicAttribute : GeneralAttribute, ICriteria
+    public class OrganicAttribute : GeneralAttribute
     {
-        public float Calculate()
-        {
-            throw new NotImplementedException();
-        }
+        //public float Val(bool val)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
