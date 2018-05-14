@@ -129,6 +129,21 @@ namespace Basket.Match.BL
             return MatToReturn;
         }
 
+        public float Normalize(float p_originalValue,float p_min, float p_max, float p_fNewMax, float p_fNewMin, bool p_bIsDesc)
+        {
+            float normalValue = 0f;
+
+            normalValue = (((p_originalValue - p_min) / (p_max - p_min)) * (p_fNewMax - p_fNewMin)) + p_fNewMin;
+
+            // in case that the category is price and etc...
+            if (p_bIsDesc)
+            {
+                normalValue = p_fNewMax - normalValue;
+            }
+
+            return normalValue;
+        }
+
         private void InitEmptyMatrix(ref float[][] mat)
         {
             List<PropertyInfo> props = BasketListGenome.GetProperties(typeof(ProductDTO));
@@ -152,11 +167,16 @@ namespace Basket.Match.BL
         private void PopulateMatrix(ref float[][] mat)
         {
             ConnectionMongoDB db = ConnectionMongoDB.GetInstance();
+            IList<BasketItemsDTO> products = this.m_basket.basketItems;
+            
 
             for (int i = 0; i < mat.Length; i++)
             {
-                ProductDTO productItem = db.GetProductDTOByProductId(this.m_basket.basketItems[i].id);
+                ProductDTO productItem = db.GetProductDTOByProductId(products[i].id);
                 List<PropertyInfo> props = BasketListGenome.GetProperties(productItem);
+
+                mat[i][0] = productItem.price;
+                mat[i][1] = productItem.category == 3 ? 1 : 0;
 
                 for (int j = 0; j < props.Count; j++)
                 {
@@ -164,6 +184,11 @@ namespace Basket.Match.BL
                     mat[i][j] = props[j].GetCustomAttribute<GeneralAttribute>().Val(value);
                 }
             }
+        }
+
+        private List<string> GetParams()
+        {
+            return new List<string> { "price", "" };
         }
 
         #endregion
