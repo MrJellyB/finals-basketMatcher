@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Basket.Common.Enums
 {
-    public enum FitnessFunctionParams
+    public enum eFitnessFunctionParams
     {
         price = 0,
         IsMeat = 1,
