@@ -18,6 +18,6 @@ namespace Basket.Common.Enums
         IsSoy = 9,
         WasInLastBasket = 10,
         GramAmount = 11,
-        IsBabyProduct = 12;
+        IsBabyProduct = 12
     }
 }

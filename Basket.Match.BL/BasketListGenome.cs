@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using Basket.ServerSide;
 using Basket.Common.Attribute;
+using Basket.Common.Enums;
 
 namespace Basket.Match.BL
 {
@@ -172,16 +173,15 @@ namespace Basket.Match.BL
             for (int i = 0; i < mat.Length; i++)
             {
                 ProductDTO productItem = db.GetProductDTOByProductId(products[i].id);
-                List<PropertyInfo> props = BasketListGenome.GetProperties(productItem);
+                // List<PropertyInfo> props = BasketListGenome.GetProperties(productItem);
 
-                mat[i][0] = productItem.price;
-                mat[i][1] = productItem.category == 3 ? 1 : 0;
+                mat[i][(int)eFitnessFunctionParams.price] = productItem.price;
 
-                for (int j = 0; j < props.Count; j++)
-                {
-                    object value = props[j].GetValue(productItem);
-                    mat[i][j] = props[j].GetCustomAttribute<GeneralAttribute>().Val(value);
-                }
+                // for (int j = 0; j < props.Count; j++)
+                // {
+                //     object value = props[j].GetValue(productItem);
+                //     mat[i][j] = props[j].GetCustomAttribute<GeneralAttribute>().Val(value);
+                // }
             }
         }
 
