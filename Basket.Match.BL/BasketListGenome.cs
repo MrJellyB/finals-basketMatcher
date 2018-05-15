@@ -5,11 +5,19 @@ using System.Collections.Generic;
 using Basket.ServerSide;
 using Basket.Common.Attribute;
 using Basket.Common.Enums;
+using System.Linq;
 
 namespace Basket.Match.BL
 {
     public class BasketListGenome : ListGenomes
     {
+        #region Consts
+
+        const int TRUE = 1;
+        const int FALSE = 0;
+
+        #endregion
+
         #region Data Members
 
         private double[] m_weights;
@@ -18,6 +26,13 @@ namespace Basket.Match.BL
         #endregion
 
         #region Properties
+
+        public string UserName
+        {
+            get { return UserName; }
+            private set { UserName = value; }
+        }
+
 
         public double[] Weights
         {
@@ -169,20 +184,88 @@ namespace Basket.Match.BL
             ConnectionMongoDB db = ConnectionMongoDB.GetInstance();
             IList<BasketItemsDTO> products = this.m_basket.basketItems;
             
-
             for (int i = 0; i < mat.Length; i++)
             {
                 ProductDTO productItem = db.GetProductDTOByProductId(products[i].id);
-                // List<PropertyInfo> props = BasketListGenome.GetProperties(productItem);
 
-                mat[i][(int)eFitnessFunctionParams.price] = productItem.price;
-
-                // for (int j = 0; j < props.Count; j++)
-                // {
-                //     object value = props[j].GetValue(productItem);
-                //     mat[i][j] = props[j].GetCustomAttribute<GeneralAttribute>().Val(value);
-                // }
+                FillProduct(mat, i, productItem, db);
             }
+        }
+
+        private void FillProduct(float[][] mat, int i, ProductDTO productItem, ConnectionMongoDB DbConnection)
+        {
+            mat[i][(int)eFitnessFunctionParams.price] = productItem.price;
+            mat[i][(int)eFitnessFunctionParams.Organic] = productItem.Organic == true ? TRUE : FALSE;
+            mat[i][(int)eFitnessFunctionParams.VeganFriendly] = productItem.VeganFriendly == true ? TRUE : FALSE;
+
+            mat[i][(int)eFitnessFunctionParams.IsMeat] = productItem.category == (int)eCategory.MeatAndFish ? TRUE : FALSE;
+            mat[i][(int)eFitnessFunctionParams.IsDairy] = productItem.category == (int)eCategory.MilkAndEggs ? TRUE : FALSE;
+            mat[i][(int)eFitnessFunctionParams.IsBabyProduct] = productItem.category == (int)eCategory.Babies ? TRUE : FALSE;
+
+            // whenever the product is kosher
+            if (productItem.Kashrut != null && productItem.Kashrut != string.Empty)
+            {
+                mat[i][(int)eFitnessFunctionParams.Kashrut] = TRUE;
+            }
+            else
+            {
+                mat[i][(int)eFitnessFunctionParams.Kashrut] = FALSE;
+            }
+
+            // whenever the product is parve
+            if (productItem.category != (int)eCategory.MeatAndFish && productItem.category != (int)eCategory.MilkAndEggs)
+            {
+                mat[i][(int)eFitnessFunctionParams.IsParve] = TRUE;
+            }
+            else
+            {
+                mat[i][(int)eFitnessFunctionParams.IsParve] = FALSE;
+            }
+
+            // whenever the product is Vegetarian
+            if (productItem.category != (int)eCategory.MeatAndFish)
+            {
+                mat[i][(int)eFitnessFunctionParams.Vegetarian] = TRUE;
+            }
+            else
+            {
+                mat[i][(int)eFitnessFunctionParams.Vegetarian] = FALSE;
+            }
+
+            // whenever the product is Vegetarian
+            if (productItem.name.Contains("סויה") ||
+                productItem.name.ToLower().Contains("soy") ||
+                productItem.ManufacturerItemDescription.Contains("סויה") ||
+                productItem.ManufacturerItemDescription.ToLower().Contains("soy"))
+            {
+                mat[i][(int)eFitnessFunctionParams.Vegetarian] = TRUE;
+            }
+            else
+            {
+                mat[i][(int)eFitnessFunctionParams.Vegetarian] = FALSE;
+            }
+
+            List<BasketDTO> allBaskets = DbConnection.GetListBasketByUserName(this.UserName);
+            //BasketDTO current = allBaskets.OrderByDescending(x => x.createdTime).FirstOrDefault();
+
+            int productCounter = 0;
+
+            foreach (BasketDTO CurrBasket in allBaskets)
+            {
+                foreach (BasketItemsDTO CurrProduct in CurrBasket.basketItems)
+                {
+                    if (CurrProduct.id == productItem.id)
+                    {
+                        productCounter++;
+
+                        break;
+                    }
+                }
+            }
+
+            float p = (float)((float)productCounter) / ((float)allBaskets.Count);
+
+            mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = p;
         }
 
         private List<string> GetParams()

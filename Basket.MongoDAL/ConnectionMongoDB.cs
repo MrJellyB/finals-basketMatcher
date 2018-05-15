@@ -142,6 +142,13 @@ namespace Basket.ServerSide
             List<BasketDTO> data = basketCollection.AsQueryable<BasketDTO>().ToList();
             return data;
         }
+
+        public List<BasketDTO> GetListBasketByUserName(string p_strUserName)
+        {
+            List<BasketDTO> data = basketCollection.AsQueryable<BasketDTO>().Where(x => x.userName == p_strUserName).ToList();
+            return data;
+        }
+
         public List<CityDTO> GetAllCitiesDTO()
         {
             List<CityDTO> data = cityCollection.AsQueryable<CityDTO>().ToList();
