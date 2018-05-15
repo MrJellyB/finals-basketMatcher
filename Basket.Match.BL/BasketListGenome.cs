@@ -125,7 +125,6 @@ namespace Basket.Match.BL
 
             InitEmptyMatrix(ref MatToReturn);
 
-
             return MatToReturn;
         }
 

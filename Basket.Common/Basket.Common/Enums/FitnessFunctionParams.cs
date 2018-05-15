@@ -17,6 +17,7 @@ namespace Basket.Common.Enums
         Vegetarian = 8,
         IsSoy = 9,
         WasInLastBasket = 10,
-        GramAmount = 11
+        GramAmount = 11,
+        IsBabyProduct = 12;
     }
 }
