@@ -134,9 +134,63 @@ namespace Basket.Match.BL
             int cols = mat.GetLength(1);
             float[] Params = new float[cols];
 
-            
+            Params[(int)eFitnessFunctionParams.price] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.price, eActionOnParams.Sum);
+            Params[(int)eFitnessFunctionParams.IsMeat] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.IsMeat, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.VeganFriendly] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.VeganFriendly, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.Kashrut] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.Kashrut, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.Organic] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.Organic, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.GlutenFree] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.GlutenFree, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.IsDairy] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.IsDairy, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.IsParve] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.IsParve, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.Vegetarian] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.Vegetarian, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.IsSoy] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.IsSoy, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.WasInLastBasket] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.WasInLastBasket, eActionOnParams.Percent);
+            Params[(int)eFitnessFunctionParams.GramAmount] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.GramAmount, eActionOnParams.Sum);
+            Params[(int)eFitnessFunctionParams.IsBabyProduct] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.IsBabyProduct, eActionOnParams.Percent);
 
-            return null;
+            return Params;
+        }
+
+        public float GetBasketParamsValues(float[][] p_mat, int p_rows ,eFitnessFunctionParams p_params, eActionOnParams p_actionOnParams)
+        {
+            float result = 0;
+
+            switch (p_actionOnParams)
+            {
+                case (eActionOnParams.Sum):
+                    {
+                        float sum = 0;
+
+                        for (int i = 0; i < p_rows; i++)
+                        {
+                            sum += p_mat[i][(int)p_params];
+                        }
+
+                        result = sum;
+
+                        break;
+                    }
+                case (eActionOnParams.Percent):
+                    {
+                        float sum = 0;
+
+                        for (int i = 0; i < p_rows; i++)
+                        {
+                            sum += p_mat[i][(int)p_params];
+                        }
+
+                        result = (sum / p_rows);
+
+                        break;
+                    }
+                default:
+                    {
+
+                        break;
+                    }
+            }
+
+            return result;
         }
 
         #endregion

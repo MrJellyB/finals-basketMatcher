@@ -71,7 +71,7 @@ namespace Basket.ServerSide
             this.GetCollectionsValues();
 
             // get collection values
-            //this.GetData();
+            this.GetData();
         }
         public void GetCollectionsValues()
         {
@@ -171,6 +171,23 @@ namespace Basket.ServerSide
         {
             List<StoreDTO> data = storeCollection.AsQueryable<StoreDTO>().ToList();
             return data;
+        }
+
+        public float GetMaxPrice()
+        {
+            float max = 0;
+            ProductDTO currProduct = null;
+
+            if (this.Products != null)
+            {
+                currProduct = this.Products.OrderByDescending(x => x.price).FirstOrDefault();
+            }
+            if (currProduct != null)
+            {
+                max = currProduct.price;
+            }
+
+            return max;
         }
 
 

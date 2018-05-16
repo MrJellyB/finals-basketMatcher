@@ -21,12 +21,12 @@ namespace Basket.ServerSide
             ProductDTO currProduct3 = db.GetProductDTOByProductId(3147699100639);
             List<BasketDTO> baskets = db.GetAllBasketsDTO();
             List<GenderDTO> genders = db.GetAllGenders();
-            
             List<ProductDTO> products = db.GetAllProductDTO();
             List<CategoryDTO> category = db.GetAllCategoriesDTO();
             List<CityDTO> cities = db.GetAllCitiesDTO();
             UserDTO user = db.GetUserDTOByUserName("liormiz");
             List<UserDTO> users = db.GetAllUsersDTO(); //test
+            float max = db.GetMaxPrice();
         }
     }
 }
