@@ -128,6 +128,8 @@ namespace Basket.Match.BL
             return productToReturn;
         }
 
+
+
         public float[] GetBasketParamsArray(float[][] mat)
         {
             int rows = mat.GetLength(0);
@@ -151,7 +153,16 @@ namespace Basket.Match.BL
             return Params;
         }
 
-        public float GetBasketParamsValues(float[][] p_mat, int p_rows ,eFitnessFunctionParams p_params, eActionOnParams p_actionOnParams)
+        public float[] NormalizeAllParams(float[] Params, int NumberOfProducts)
+        {
+            float[] result = new float[Params.Length];
+
+            // TODO
+
+            return result;
+        }
+
+        private float GetBasketParamsValues(float[][] p_mat, int p_rows ,eFitnessFunctionParams p_params, eActionOnParams p_actionOnParams)
         {
             float result = 0;
 
@@ -209,7 +220,7 @@ namespace Basket.Match.BL
             return MatToReturn;
         }
 
-        public float Normalize(float p_originalValue,float p_min, float p_max, float p_fNewMax, float p_fNewMin, bool p_bIsDesc)
+        private float Normalize(float p_originalValue,float p_min, float p_max, float p_fNewMax, float p_fNewMin, bool p_bIsDesc)
         {
             float normalValue = 0f;
 
