@@ -128,6 +128,17 @@ namespace Basket.Match.BL
             return productToReturn;
         }
 
+        public float[] GetBasketParamsArray(float[][] mat)
+        {
+            int rows = mat.GetLength(0);
+            int cols = mat.GetLength(1);
+            float[] Params = new float[cols];
+
+            
+
+            return null;
+        }
+
         #endregion
 
         #region Private Methods
@@ -263,9 +274,7 @@ namespace Basket.Match.BL
                 }
             }
 
-            float p = (float)((float)productCounter) / ((float)allBaskets.Count);
-
-            mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = p;
+            mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = (float)((float)productCounter) / ((float)allBaskets.Count);
         }
 
         private List<string> GetParams()
