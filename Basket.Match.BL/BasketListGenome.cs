@@ -208,6 +208,14 @@ namespace Basket.Match.BL
 
         #region Private Methods
 
+        private float[] InvokeAndReturnMatrixCalculations()
+        {
+
+            // TODO: Invoke here every parameter (column) in the matrix and
+            // put it a one dimentional array
+            return new float[1];
+        }
+
         // Make a values matrix out of the basket
         private float[][] MakeBasketMatrix()
         {
@@ -216,6 +224,8 @@ namespace Basket.Match.BL
             float[][] MatToReturn = new float[numItems][];
 
             InitEmptyMatrix(ref MatToReturn);
+
+            PopulateMatrix(ref MatToReturn);
 
             return MatToReturn;
         }
