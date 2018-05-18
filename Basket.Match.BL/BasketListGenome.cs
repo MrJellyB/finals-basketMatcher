@@ -156,24 +156,8 @@ namespace Basket.Match.BL
         public float[] NormalizeAllParams(float[] Params, int NumberOfProducts)
         {
             float[] result = new float[Params.Length];
-            const int MAX_PRICE_TO_BASKET = 5000;
-            const int MAX_WEIGHT_TO_BASKET = 50000;
-            const int MAX_NORMAL = 100;
-            const int MIN_NORMAL = 0;
 
-            result[(int)eFitnessFunctionParams.price] = this.Normalize(Params[(int)eFitnessFunctionParams.price], 0, MAX_PRICE_TO_BASKET, MAX_NORMAL, MIN_NORMAL, true);
-            result[(int)eFitnessFunctionParams.IsMeat] = this.Normalize(Params[(int)eFitnessFunctionParams.IsMeat], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.VeganFriendly] = this.Normalize(Params[(int)eFitnessFunctionParams.VeganFriendly], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.Kashrut] = this.Normalize(Params[(int)eFitnessFunctionParams.Kashrut], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.Organic] = this.Normalize(Params[(int)eFitnessFunctionParams.Organic], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.GlutenFree] = this.Normalize(Params[(int)eFitnessFunctionParams.GlutenFree], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.IsDairy] = this.Normalize(Params[(int)eFitnessFunctionParams.IsDairy], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.IsParve] = this.Normalize(Params[(int)eFitnessFunctionParams.IsParve], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.Vegetarian] = this.Normalize(Params[(int)eFitnessFunctionParams.Vegetarian], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.IsSoy] = this.Normalize(Params[(int)eFitnessFunctionParams.IsSoy], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.WasInLastBasket] = this.Normalize(Params[(int)eFitnessFunctionParams.WasInLastBasket], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.GramAmount] = this.Normalize(Params[(int)eFitnessFunctionParams.GramAmount], 0, MAX_WEIGHT_TO_BASKET, MAX_NORMAL, MIN_NORMAL, false);
-            result[(int)eFitnessFunctionParams.IsBabyProduct] = this.Normalize(Params[(int)eFitnessFunctionParams.IsBabyProduct], 0, 1, MAX_NORMAL, MIN_NORMAL, false);
+            // TODO
 
             return result;
         }
@@ -226,7 +210,7 @@ namespace Basket.Match.BL
 
         private float[] InvokeAndReturnMatrixCalculations()
         {
-
+            
             // TODO: Invoke here every parameter (column) in the matrix and
             // put it a one dimentional array
             return new float[1];
@@ -290,16 +274,15 @@ namespace Basket.Match.BL
             {
                 ProductDTO productItem = db.GetProductDTOByProductId(products[i].id);
 
-                FillProduct(mat, i, productItem, db);
+                FillProduct(ref mat, i, productItem, db);
             }
         }
 
-        private void FillProduct(float[][] mat, int i, ProductDTO productItem, ConnectionMongoDB DbConnection)
-        {           
+        private void FillProduct(ref float[][] mat, int i, ProductDTO productItem, ConnectionMongoDB DbConnection)
+        {
             mat[i][(int)eFitnessFunctionParams.price] = productItem.price;
             mat[i][(int)eFitnessFunctionParams.Organic] = productItem.Organic == true ? TRUE : FALSE;
             mat[i][(int)eFitnessFunctionParams.VeganFriendly] = productItem.VeganFriendly == true ? TRUE : FALSE;
-            mat[i][(int)eFitnessFunctionParams.GlutenFree] = productItem.GlutenFree == true ? TRUE : FALSE;
 
             mat[i][(int)eFitnessFunctionParams.IsMeat] = productItem.category == (int)eCategory.MeatAndFish ? TRUE : FALSE;
             mat[i][(int)eFitnessFunctionParams.IsDairy] = productItem.category == (int)eCategory.MilkAndEggs ? TRUE : FALSE;
@@ -341,15 +324,15 @@ namespace Basket.Match.BL
                 productItem.ManufacturerItemDescription.Contains("סויה") ||
                 productItem.ManufacturerItemDescription.ToLower().Contains("soy"))
             {
-                mat[i][(int)eFitnessFunctionParams.IsSoy] = TRUE;
+                mat[i][(int)eFitnessFunctionParams.Vegetarian] = TRUE;
             }
             else
             {
-                mat[i][(int)eFitnessFunctionParams.IsSoy] = FALSE;
+                mat[i][(int)eFitnessFunctionParams.Vegetarian] = FALSE;
             }
 
             List<BasketDTO> allBaskets = DbConnection.GetListBasketByUserName(this.UserName);
-            
+            //BasketDTO current = allBaskets.OrderByDescending(x => x.createdTime).FirstOrDefault();
 
             int productCounter = 0;
 
@@ -367,39 +350,6 @@ namespace Basket.Match.BL
             }
 
             mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = (float)((float)productCounter) / ((float)allBaskets.Count);
-            mat[i][(int)eFitnessFunctionParams.GramAmount] = this.GetGramsFromProductAmount(productItem);
-        }
-
-        public float GetGramsFromProductAmount(ProductDTO p_productDTO)
-        {
-            const string KILO= "קילוגרמים";
-            const string GRAM = "גרמים";
-            const string MILI = "מיליליטרים";
-            const string UNIT = "יחידה";
-            const string LITER = "ליטרים";
-
-            float result = 0;
-
-            int MulParam = 1;
-            string ProductUnit = p_productDTO.UnitQty;
-
-            if ((ProductUnit == KILO) || (ProductUnit == LITER))
-            {
-                MulParam = 1000;
-            }
-            else if (ProductUnit == UNIT)
-            {
-                MulParam = 300;
-                // Check is good.
-            }
-            else if ((ProductUnit == GRAM) || (ProductUnit == MILI))
-            {
-                MulParam = 1;
-            }
-
-                result = p_productDTO.Quantity * MulParam;
-
-            return result;
         }
 
         private List<string> GetParams()
