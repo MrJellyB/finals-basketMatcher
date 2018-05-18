@@ -290,11 +290,11 @@ namespace Basket.Match.BL
             {
                 ProductDTO productItem = db.GetProductDTOByProductId(products[i].id);
 
-                FillProduct(mat, i, productItem, db);
+                FillProduct(ref mat, i, productItem, db);
             }
         }
 
-        private void FillProduct(float[][] mat, int i, ProductDTO productItem, ConnectionMongoDB DbConnection)
+        private void FillProduct(ref float[][] mat, int i, ProductDTO productItem, ConnectionMongoDB DbConnection)
         {
             mat[i][(int)eFitnessFunctionParams.price] = productItem.price;
             mat[i][(int)eFitnessFunctionParams.Organic] = productItem.Organic == true ? TRUE : FALSE;
