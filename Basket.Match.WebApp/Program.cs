@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
 
 namespace finals_basketMatch
 {
@@ -11,6 +12,7 @@ namespace finals_basketMatch
     {
         public static void Main(string[] args)
         {
+            /*
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
@@ -18,9 +20,15 @@ namespace finals_basketMatch
                 .UseStartup<Startup>()
                 .Build();
 
-            host.Run();
+            host.Run();*/
+
+            BuildWebHost(args).Run();
         }
 
-        
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .Build();
+
     }
 }

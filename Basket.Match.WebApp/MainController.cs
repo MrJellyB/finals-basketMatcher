@@ -8,7 +8,7 @@ using System;
 
 namespace finals_basketMatch
 {
-    [Produces("application/json")]
+    //[Produces("application/json")]
     [Route("api/[controller]")]
     public class MainController : ControllerBase
     {
@@ -36,6 +36,13 @@ namespace finals_basketMatch
 
         #endregion
 
+        // GET api/values
+        [HttpGet]
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2", "value3" };
+        }
+
         [HttpGet]
         public IActionResult PostInvokeSuggetionsMatch()
         {
@@ -51,7 +58,7 @@ namespace finals_basketMatch
             // step 1: generates 1000 baskets
             List<BasketDTO> listBaskets = this.db.GenerateRandomBasket(NUMBER_OF_BASKETS, FROM_PRODUCTS, TO_PRODUCTS);
 
-                // *** CHANGE TO SAPIR FUNCION ***
+                // TODO: *** CHANGE TO SAPIR FUNCION ***
                 float[] Wights = new float[13];
                 for (int i = 0; i < 13; i++)
                 {
@@ -84,7 +91,8 @@ namespace finals_basketMatch
                 Generation.Add(BasketGenomObject);
             }
 
-            Population AllPopulation = new Population(1000, 500, 1, 100, 0.02f, 30, 70, Wights);
+            Population AllPopulation = new Population(Generation, 1000, 500, 1000, 1000, 0.02f, 30, 70, Wights);
+            
 
             return Ok(null);
         }

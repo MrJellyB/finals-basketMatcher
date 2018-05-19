@@ -65,6 +65,20 @@ namespace Basket.Match.BL
             }
         }
 
+        public Population(
+            List<BasketListGenome> genomes,
+            int length,
+            int crossOverPoint,
+            int initialPop,
+            int popLimit,
+            float mutationFreq,
+            float deathParam,
+            float reproductionParam,
+            float[] weights) : this(length, crossOverPoint, initialPop, popLimit, mutationFreq, deathParam, reproductionParam, weights)
+        {
+            this.m_genomes = genomes;
+        }
+
         #endregion
 
         #region Private Methods
