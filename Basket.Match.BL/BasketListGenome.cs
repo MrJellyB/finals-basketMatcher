@@ -22,6 +22,7 @@ namespace Basket.Match.BL
 
         private double[] m_weights;
         private BasketDTO m_basket;
+        private string m_userName;
 
         #endregion
 
@@ -29,8 +30,8 @@ namespace Basket.Match.BL
 
         public string UserName
         {
-            get { return UserName; }
-            set { UserName = value; }
+            get { return m_userName; }
+            set { m_userName = value; }
         }
 
         public BasketDTO BasketObject
@@ -85,10 +86,23 @@ namespace Basket.Match.BL
 
         #region CTOR
 
-        public BasketListGenome(int length) : base(length, 0, 1)
+        //public BasketListGenome(int length) : base(length, 0, 1)
+        //{
+        //    this.m_weights = new double[length];
+        //    this.m_weights[0] = 1;
+
+        //    // Default weights
+        //    for (int i = 1; i < m_weights.Length; i++)
+        //    {
+        //        this.m_weights[i] = 0;
+        //    }
+        //}
+
+        public BasketListGenome(BasketDTO basket) : base(basket.basketItems, 0, 1)
         {
-            this.m_weights = new double[length];
+            this.m_weights = new double[basket.basketItems.Count];
             this.m_weights[0] = 1;
+            this.m_basket = basket;
 
             // Default weights
             for (int i = 1; i < m_weights.Length; i++)
@@ -128,7 +142,7 @@ namespace Basket.Match.BL
             {
                 // TODO: Compare those genes against IdialBaskets in Population class
                 // to find the minimum
-                productToReturn *= (this.m_weights[i] * (double)this.m_list[i]);
+                //productToReturn *= (this.m_weights[i] * (double)this.m_list[i]);
             }
 
             return productToReturn;
@@ -156,8 +170,8 @@ namespace Basket.Match.BL
 
         private float[] GetBasketParamsArray(float[][] mat)
         {
-            int rows = mat.GetLength(0);
-            int cols = mat.GetLength(1);
+            int rows = mat.Length;
+            int cols = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
             float[] Params = new float[cols];
 
             Params[(int)eFitnessFunctionParams.price] = this.GetBasketParamsValues(mat, rows, eFitnessFunctionParams.price, eActionOnParams.Sum);
@@ -289,8 +303,8 @@ namespace Basket.Match.BL
 
         private void InitEmptyMatrix(ref float[][] mat)
         {
-            List<PropertyInfo> props = BasketListGenome.GetProperties(typeof(ProductDTO));
-            int numOfProps = props.Count;
+            // List<PropertyInfo> props = BasketListGenome.GetProperties(typeof(ProductDTO));
+            int numOfProps = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
 
             for (int i = 0; i < mat.Length; i++)
             {
@@ -392,7 +406,15 @@ namespace Basket.Match.BL
                 }
             }
 
-            mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = (float)((float)productCounter) / ((float)allBaskets.Count);
+            if (allBaskets.Count != 0)
+            {
+                mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = (float)((float)productCounter) / ((float)allBaskets.Count);
+            }
+            else
+            {
+                mat[i][(int)eFitnessFunctionParams.WasInLastBasket] = 0;
+            }
+            
             mat[i][(int)eFitnessFunctionParams.GramAmount] = this.GetGramsFromProductAmount(productItem);
         }
 

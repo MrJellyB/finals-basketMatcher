@@ -52,17 +52,17 @@ namespace Basket.Match.BL
             this.m_deathParam = deathParam;
             this.m_reproduceParam = reproductionParam;
 
-            this.m_genomes = new List<BasketListGenome>();
+            //this.m_genomes = new List<BasketListGenome>();
 
-            for (int i = 0; i < this.m_initialPopulationCount; i++)
-            {
-                BasketListGenome newGenome = new BasketListGenome(this.m_length);
-                newGenome.CrossoverPoint = this.m_crossoverPoint;
-                newGenome.FitnessFunction();
-                newGenome.SetWeights(weights);
+            //for (int i = 0; i < this.m_initialPopulationCount; i++)
+            //{
+            //    BasketListGenome newGenome = new BasketListGenome(this.m_length);
+            //    newGenome.CrossoverPoint = this.m_crossoverPoint;
+            //    newGenome.FitnessFunction();
+            //    newGenome.SetWeights(weights);
 
-                this.m_genomes.Add(newGenome);
-            }
+            //    this.m_genomes.Add(newGenome);
+            //}
         }
 
         public Population(
