@@ -28,7 +28,9 @@ namespace Basket.Match.BL
 
         #region Static Members
 
-        public static List<BasketListGenome> IdialBaskets;
+        // TODO: Change this to list later
+        //public static List<BasketListGenome> IdialBaskets;
+        public static BasketListGenome IdialBaskets;
 
         #endregion
 
@@ -150,6 +152,28 @@ namespace Basket.Match.BL
             }
         }
 
+        private void SaveBestBasket()
+        {
+            BasketListGenome BestBasket = null;
+
+            foreach (BasketListGenome basketGenome in this.m_genomes)
+            {
+                if (BestBasket == null)
+                {
+                    BestBasket = basketGenome;
+                }
+                else if (basketGenome != null)
+                {
+                    if (BestBasket.CurrentFitness < basketGenome.CurrentFitness)
+                    {
+                        BestBasket = basketGenome;
+                    }
+                }
+            }
+
+            IdialBaskets = BestBasket;
+        }
+
         #endregion
 
         #region Public Methods
@@ -157,6 +181,9 @@ namespace Basket.Match.BL
         public void NextGen()
         {
             this.m_currentGeneration++;
+
+            // Save the best
+            this.SaveBestBasket();
 
             // Check which of the genomes we need to kill
             foreach (BasketListGenome g in this.m_genomes)
