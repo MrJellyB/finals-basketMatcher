@@ -5,6 +5,7 @@ using Basket.ServerSide;
 using Basket.Match.BL;
 using Basket.Common.Enums;
 using System;
+using System.Reflection;
 
 namespace finals_basketMatch
 {
@@ -95,6 +96,128 @@ namespace finals_basketMatch
             
 
             return Ok(null);
+        }
+
+        public float[] setWeightsPerProfile(String strUserName)
+        {
+            float[] fltWeights = new float[13];
+            UserDTO currUser = db.GetUserDTOByUserName(strUserName);
+
+            // Price considerations are common to all kinds of profile
+            fltWeights[(int)eFitnessFunctionParams.price] = (float)0.9;
+            fltWeights[(int)eFitnessFunctionParams.WasInLastBasket] = (float)0.8;
+
+            // Kosher considerations are also common to all kinds of profile
+            if (currUser.profile.preferences.kosher == true)
+            {
+                fltWeights[(int)eFitnessFunctionParams.Kashrut] = 1;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.Kashrut] = (float)0.5;
+            }
+
+            // Check organic preference 
+            if (currUser.profile.preferences.organic == true)
+            {
+                fltWeights[(int)eFitnessFunctionParams.Organic] = (float)1;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.Organic] = (float)0.2;
+            }
+
+            // Check avoidness to milk: If has no avoidness, put 0.6 and then if the user is 
+            // vegan, put lower score
+            if (currUser.profile.avoidness.milk == false)
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsDairy] = (float)0.6;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsDairy] = 0;
+            }
+
+            // Parve considerations are common to non unique baskets - if they are unique,
+            // the score will be changed later
+            fltWeights[(int)eFitnessFunctionParams.IsParve] = (float)0.5;
+
+            // Check gluten avoidness   
+            if (currUser.profile.avoidness.gluten == true)
+            {
+                fltWeights[(int)eFitnessFunctionParams.GlutenFree] = (float)0;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.GlutenFree] = (float)0.5;
+            }
+
+            // Check soy avoidness   
+            if (currUser.profile.avoidness.soy == true)
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsSoy] = (float)0;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsSoy] = (float)0.5;
+            }
+
+            // Check grmas - the bigger the fanily, the bigger the grams
+            if (currUser.profile.peopleAmount.adults >= 2)
+            {
+                fltWeights[(int)eFitnessFunctionParams.GramAmount] = (float)0.4;
+
+                if (currUser.profile.peopleAmount.kids >= 1 || 
+                    currUser.profile.peopleAmount.babies >= 1)
+                {
+                    fltWeights[(int)eFitnessFunctionParams.GramAmount] = (float)0.6;
+                }
+                else if (currUser.profile.peopleAmount.kids > 2 ||
+                         currUser.profile.peopleAmount.babies > 2)
+                {
+                    fltWeights[(int)eFitnessFunctionParams.GramAmount] = (float)0.8;
+                }
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.GramAmount] = (float)0.2;
+            }
+
+            // Get user profile - Define weights by preferences
+            if (currUser.profile.preferences.veggie == true)
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsMeat] = 0;
+                fltWeights[(int)eFitnessFunctionParams.IsParve] = (float)0.8;
+                fltWeights[(int)eFitnessFunctionParams.IsDairy] = (float)0.8;
+                fltWeights[(int)eFitnessFunctionParams.VeganFriendly] = (float)0.6;
+                fltWeights[(int)eFitnessFunctionParams.Vegetarian] = (float)1;
+            }
+            else if (currUser.profile.preferences.vegan == true)
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsMeat] = 0;
+                fltWeights[(int)eFitnessFunctionParams.IsParve] = (float)0.9;
+                fltWeights[(int)eFitnessFunctionParams.IsDairy] = (float)0;
+                fltWeights[(int)eFitnessFunctionParams.VeganFriendly] = (float)1;
+                fltWeights[(int)eFitnessFunctionParams.Vegetarian] = (float)0.8;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsMeat] = (float)0.5;
+                fltWeights[(int)eFitnessFunctionParams.VeganFriendly] = (float)0.3;
+                fltWeights[(int)eFitnessFunctionParams.Vegetarian] = (float)0.5;
+            }
+
+            // Check if there's a need to baby products
+            if (currUser.profile.peopleAmount.babies > 0)
+            {
+                fltWeights[(int)eFitnessFunctionParams.IsBabyProduct] = (float)1;
+            }
+            else
+            {
+                fltWeights[(int)eFitnessFunctionParams.Vegetarian] = (float)0;
+            }
+            
+            return fltWeights;
         }
     }
 }
