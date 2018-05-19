@@ -59,7 +59,7 @@ namespace finals_basketMatch
                 BasketGenomObject.UserName = p_strUserName;
 
                 // init the matrix
-                float[][] Matrix = new float[listBaskets[0].GetBasketItemCount()][];
+                float[][] Matrix = new float[CurrBasket.GetBasketItemCount()][];
 
                 int enumFitnessSize = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
                 for (int i = 0; i < Matrix.Length; i++)
