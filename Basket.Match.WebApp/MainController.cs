@@ -80,6 +80,8 @@ namespace finals_basketMatch
                 // *** CHANGE TO SAPIR FUNCION ***
 
                 float Grade = BasketGenomObject.FitnessFunction(Params, Wights);
+
+                Generation.Add(BasketGenomObject);
             }
 
             return Ok(null);
