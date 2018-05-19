@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Basket.Common.Data;
+using System;
 using System.Collections.Generic;
 
 namespace Basket.Match.BL
@@ -29,8 +30,8 @@ namespace Basket.Match.BL
             set { m_max = value;}
         }
         
-        protected List<object> m_list;
-        public List<object> List
+        protected IList<BasketItemsDTO> m_list;
+        public IList<BasketItemsDTO> List
         {
             get { return m_list;}
             set { m_list = value;}
@@ -46,26 +47,34 @@ namespace Basket.Match.BL
 
         }
 
-        public ListGenomes(long length, int min, int max) 
-        {
-            this.Length = length;
-            this.Min = min;
-            this.Max = max;
-            this.m_list = new List<object>();
+        //public ListGenomes(long length, int min, int max) 
+        //{
+        //    this.Length = length;
+        //    this.Min = min;
+        //    this.Max = max;
+        //    this.m_list = new List<BasketItemsDTO>();
 
-            // Generate the gene list
-            for (int i = 0; i < length; i++)
-            {
-                float nextVal = GenerateRandGeneVal(min,max);
-                this.m_list.Add(nextVal);
-            }
-        }
+        //    // Generate the gene list
+        //    for (int i = 0; i < length; i++)
+        //    {
+        //        float nextVal = GenerateRandGeneVal(min,max);
+        //        this.m_list.Add(nextVal);
+        //    }
+        //}
         public ListGenomes(Genome g, int min, int max) 
         {
             this.Length = ((ListGenomes)g).List.Count;
             this.Min = min;
             this.Max = max;
             this.m_list = ((ListGenomes)g).List;
+        }
+
+        public ListGenomes(IList<BasketItemsDTO> list, int min, int max)
+        {
+            this.Length = list.Count;
+            this.Min = min;
+            this.Max = max;
+            this.m_list = list;
         }
 
         private float GenerateRandGeneVal(int min, int max)
@@ -131,7 +140,7 @@ namespace Basket.Match.BL
         /// </summary>
         public override void Mutate()
         {
-            this.List[Seed.Next((int)this.Length)] = Seed.Next(this.Min, this.Max);
+            //this.List[Seed.Next((int)this.Length)] = Seed.Next(this.Min, this.Max);
         }
         
         public override bool CanDie(float fitness)
