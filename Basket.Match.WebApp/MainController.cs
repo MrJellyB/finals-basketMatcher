@@ -51,6 +51,14 @@ namespace finals_basketMatch
             // step 1: generates 1000 baskets
             List<BasketDTO> listBaskets = this.db.GenerateRandomBasket(NUMBER_OF_BASKETS, FROM_PRODUCTS, TO_PRODUCTS);
 
+                // *** CHANGE TO SAPIR FUNCION ***
+                float[] Wights = new float[13];
+                for (int i = 0; i < 13; i++)
+                {
+                    Wights[i] = 1f;
+                }
+                // *** CHANGE TO SAPIR FUNCION ***
+
             List<BasketListGenome> Generation = new List<BasketListGenome>();
 
             foreach(BasketDTO CurrBasket in listBaskets)
@@ -71,18 +79,12 @@ namespace finals_basketMatch
                 BasketGenomObject.MakeBasketMatrix(ref Matrix);
                 float[] Params = BasketGenomObject.GetBasketNormalizedParams(Matrix);
 
-                // *** CHANGE TO SAPIR FUNCION ***
-                float[] Wights = new float[13];
-                for (int i = 0; i < 13; i++)
-                {
-                    Wights[i] = 1f;
-                }
-                // *** CHANGE TO SAPIR FUNCION ***
-
                 float Grade = BasketGenomObject.FitnessFunction(Params, Wights);
 
                 Generation.Add(BasketGenomObject);
             }
+
+            Population AllPopulation = new Population(1000, 500, 1, 100, 0.02f, 30, 70, Wights);
 
             return Ok(null);
         }
