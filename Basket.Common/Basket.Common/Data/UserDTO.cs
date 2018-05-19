@@ -89,6 +89,7 @@ namespace Basket.Common.Data
         public bool veggie { get; set; }
 
         public bool organic { get; set; }
+        // to push 
     }
 
     public class Avoidness
