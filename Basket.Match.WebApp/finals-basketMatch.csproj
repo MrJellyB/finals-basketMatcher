@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Basket.Common\Basket.Common\Basket.Common.csproj" />
+    <ProjectReference Include="..\Basket.Match.BL\Basket.Match.BL.csproj" />
+    <ProjectReference Include="..\Basket.MongoDAL\Basket.MongoDAL.csproj" />
   </ItemGroup>
 
 </Project>

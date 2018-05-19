@@ -30,50 +30,56 @@ namespace Basket.Match.BL
         public string UserName
         {
             get { return UserName; }
-            private set { UserName = value; }
+            set { UserName = value; }
         }
 
-
-        public double[] Weights
+        public BasketDTO BasketObject
         {
-            get { return m_weights; }
-            private set { m_weights = value; }
+            get { return this.m_basket; }
+            set { this.m_basket = value; }
         }
 
-        // TODO: Return here a matrix containing the values of the basket's items
-        public float[] Basket
-        {
-            get
-            {
-                IList<BasketItemsDTO> items = this.m_basket.basketItems;
-                ConnectionMongoDB mongo = ConnectionMongoDB.GetInstance();
 
-                int numOfProps = BasketListGenome.GetProperties(typeof(ProductDTO)).Count;
-                float[] result = new float[numOfProps];
+        //public double[] Weights
+        //{
+        //    get { return m_weights; }
+        //    private set { m_weights = value; }
+        //}
 
-                // Run over all items in a basket and with reflection 
-                // and add all props with attrs to result
-                foreach (var item in items)
-                {
-                    List<PropertyInfo> props = BasketListGenome.GetProperties(item);
-                    int j = 0;
+        //// TODO: Return here a matrix containing the values of the basket's items
+        //public float[] Basket
+        //{
+        //    get
+        //    {
+        //        IList<BasketItemsDTO> items = this.m_basket.basketItems;
+        //        ConnectionMongoDB mongo = ConnectionMongoDB.GetInstance();
 
-                    // Run over all props and add only those who has our custom attributes
-                    for (int i = 0; i < props.Count; i++)
-                    {
-                        GeneralAttribute relatedAttr = props[i].GetCustomAttribute<GeneralAttribute>();
+        //        int numOfProps = BasketListGenome.GetProperties(typeof(ProductDTO)).Count;
+        //        float[] result = new float[numOfProps];
 
-                        if (relatedAttr != null)
-                        {
-                            //result[j++] = 
-                        }
-                    }
-                }
+        //        // Run over all items in a basket and with reflection 
+        //        // and add all props with attrs to result
+        //        foreach (var item in items)
+        //        {
+        //            List<PropertyInfo> props = BasketListGenome.GetProperties(item);
+        //            int j = 0;
 
-                return result;
-            }
-            //set { m_basket = value; }
-        }
+        //            // Run over all props and add only those who has our custom attributes
+        //            for (int i = 0; i < props.Count; i++)
+        //            {
+        //                GeneralAttribute relatedAttr = props[i].GetCustomAttribute<GeneralAttribute>();
+
+        //                if (relatedAttr != null)
+        //                {
+        //                    //result[j++] = 
+        //                }
+        //            }
+        //        }
+
+        //        return result;
+        //    }
+        //    //set { m_basket = value; }
+        //}
 
         #endregion
 
@@ -128,9 +134,27 @@ namespace Basket.Match.BL
             return productToReturn;
         }
 
+        public  float FitnessFunction(float[] p_params, float[] p_weights)
+        {
+            float result = 0f;
 
+            for (int i=0; i< p_params.Length; i++)
+            {
+                result += (p_params[i] * p_weights[i]);
+            }
 
-        public float[] GetBasketParamsArray(float[][] mat)
+            
+            this.CurrentFitness = result;
+            return result;
+        }
+
+        public float[] GetBasketNormalizedParams(float[][] mat)
+        {
+            float[] UnNormalizedParams = this.GetBasketParamsArray(mat);
+            return this.NormalizeAllParams(UnNormalizedParams, mat.Length);
+        }
+
+        private float[] GetBasketParamsArray(float[][] mat)
         {
             int rows = mat.GetLength(0);
             int cols = mat.GetLength(1);
@@ -153,7 +177,7 @@ namespace Basket.Match.BL
             return Params;
         }
 
-        public float[] NormalizeAllParams(float[] Params, int NumberOfProducts)
+        private float[] NormalizeAllParams(float[] Params, int NumberOfProducts)
         {
             float[] result = new float[Params.Length];
             const int MAX_PRICE_TO_BASKET = 5000;
@@ -233,11 +257,13 @@ namespace Basket.Match.BL
         }
 
         // Make a values matrix out of the basket
-        private float[][] MakeBasketMatrix()
+        public float[][] MakeBasketMatrix(ref float[][] MatToReturn)
         {
-            int numItems = this.m_basket.basketItems.Count;
-            int numOfProps = BasketListGenome.GetProperties(typeof(ProductDTO)).Count;
-            float[][] MatToReturn = new float[numItems][];
+            //int numItems = this.m_basket.basketItems.Count;
+            //int enumFitnessSize = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
+            //int numOfProps = BasketListGenome.GetProperties(typeof(ProductDTO)).Count;
+
+
 
             InitEmptyMatrix(ref MatToReturn);
 

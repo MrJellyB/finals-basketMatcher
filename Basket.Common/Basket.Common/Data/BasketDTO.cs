@@ -30,6 +30,15 @@ namespace Basket.Common.Data
         public string userName { get; set; }
 
         public int id { get; set; }
+
+        public int GetBasketItemCount()
+        {
+            if (this.basketItems != null)
+            {
+                return this.basketItems.Count;
+            }
+            return 0;
+        }
     }
 
     public class BasketItemsDTO
