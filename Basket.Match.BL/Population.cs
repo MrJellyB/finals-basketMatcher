@@ -19,10 +19,10 @@ namespace Basket.Match.BL
         private int m_currentGeneration = 1;
 
         // Initial populaitons
-        private List<BasketListGenome> m_genomes;
-        private List<BasketListGenome> m_genomesResults;
-        private List<BasketListGenome> m_genomesNextGen;
-        private List<BasketListGenome> m_genomeFamily;
+        private List<BasketListGenome> m_genomes = new List<BasketListGenome>();
+        private List<BasketListGenome> m_genomesResults = new List<BasketListGenome>();
+        private List<BasketListGenome> m_genomesNextGen = new List<BasketListGenome>();
+        private List<BasketListGenome> m_genomeFamily = new List<BasketListGenome>();
 
         #endregion
 
@@ -54,6 +54,11 @@ namespace Basket.Match.BL
             this.m_deathParam = deathParam;
             this.m_reproduceParam = reproductionParam;
 
+            m_genomes = new List<BasketListGenome>();
+            m_genomesResults = new List<BasketListGenome>();
+            m_genomesNextGen = new List<BasketListGenome>();
+            m_genomeFamily = new List<BasketListGenome>();
+
             //this.m_genomes = new List<BasketListGenome>();
 
             //for (int i = 0; i < this.m_initialPopulationCount; i++)
@@ -78,7 +83,20 @@ namespace Basket.Match.BL
             float reproductionParam,
             float[] weights) : this(length, crossOverPoint, initialPop, popLimit, mutationFreq, deathParam, reproductionParam, weights)
         {
-            this.m_genomes = genomes;
+            this.m_genomes = new List<BasketListGenome>();
+
+            if (genomes != null)
+            {
+                this.m_genomes = genomes;
+            }
+            else
+            {
+                this.m_genomes = new List<BasketListGenome>();
+            }
+
+            this.m_genomesResults = new List<BasketListGenome>();
+            this.m_genomesNextGen = new List<BasketListGenome>();
+            this.m_genomeFamily = new List<BasketListGenome>();
         }
 
         #endregion
@@ -185,18 +203,31 @@ namespace Basket.Match.BL
             // Save the best
             this.SaveBestBasket();
 
+            List<BasketListGenome> lstGenomesToRemove = new List<BasketListGenome>();
+        
             // Check which of the genomes we need to kill
             foreach (BasketListGenome g in this.m_genomes)
             {
                 if(g.CanDie(this.m_deathParam))
                 {
-                    this.m_genomes.Remove(g);
+                    //this.m_genomes.Remove(g);
+                    lstGenomesToRemove.Add(g);
                 }
             }
 
-            // Now reproduce
-            this.m_genomesNextGen.Clear();
-            this.m_genomesResults.Clear();
+            // Lior M: Add collection to remove all te genomes that need to remove
+            this.m_genomes.RemoveAll(x => lstGenomesToRemove.Contains(x));
+            
+            if (this.m_genomesNextGen != null)
+            {
+                // Now reproduce
+                this.m_genomesNextGen.Clear();
+            }
+            if (m_genomesResults != null)
+            {
+                // Now reproduce
+                this.m_genomesResults.Clear();
+            }
 
             // Check which genomes need to be reproduced
             foreach (BasketListGenome g in this.m_genomes)

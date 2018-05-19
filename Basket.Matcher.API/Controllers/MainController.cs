@@ -19,8 +19,10 @@ namespace finals_basketMatch
         public const int TO_PRODUCTS = 10;
         public const float MUTATION_PRECENT = 0.02f;
         public const int NUM_OF_GENERATION = 2;
-        public const float MIN_FITNESS = 400;
-        public const float MAX_FITNESS = 900;
+        //public const float MIN_FITNESS = 400;
+        public const float MIN_FITNESS = 180;
+        //public const float MAX_FITNESS = 900;
+        public const float MAX_FITNESS = 300;
 
         public int enumFitnessSize = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
 
