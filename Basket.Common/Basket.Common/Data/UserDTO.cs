@@ -87,6 +87,8 @@ namespace Basket.Common.Data
         public bool vegan { get; set; }
 
         public bool veggie { get; set; }
+
+        public bool organic { get; set; }
     }
 
     public class Avoidness
