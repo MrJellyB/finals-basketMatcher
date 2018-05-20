@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Basket.ServerSide;
 
 namespace Basket.Match.BL
 {
@@ -17,6 +18,8 @@ namespace Basket.Match.BL
         private float m_deathParam;
         private float m_reproduceParam;
         private int m_currentGeneration = 1;
+
+        
 
         // Initial populaitons
         public List<BasketListGenome> m_genomes = new List<BasketListGenome>();
@@ -160,7 +163,7 @@ namespace Basket.Match.BL
                 genes.Remove(CurrToRemove);
             }
 
-            List<Tuple<BasketListGenome, BasketListGenome>> lstCrossoverList = new List<Tuple<BasketListGenome, BasketListGenome>>();
+            
 
             for (int i=0; i < genes.Count-1; i+=2)
             {
@@ -248,16 +251,39 @@ namespace Basket.Match.BL
 
             this.m_genomes = DoCrossover(this.m_genomesNextGen);
 
-            //// Check for mutations
-            //foreach (Genome g in this.m_genomes)
-            //{
-            //    Mutate(g);
-            //}
+            // Check for mutations
+            for (int i=0; i< this.m_genomes.Count; i++)
+            {
+                this.m_genomes[i] = this.MutateBasket(this.m_genomes[i]);
+            }
 
 
         }
 
+        private BasketListGenome MutateBasket(BasketListGenome BasketToMutate)
+        {
+            BasketListGenome MutatedBasket = BasketToMutate;
+            ConnectionMongoDB db = ConnectionMongoDB.GetInstance();
 
+            if (this.GetRandomNumber(0, 1) <= this.m_mutationFreq)
+            {
+                for (int i=0; i< MutatedBasket.BasketObject.basketItems.Count; i++)
+                {
+                    if (this.GetRandomNumber(0, 1) <= this.m_mutationFreq)
+                    {
+                        MutatedBasket.BasketObject.basketItems[i] = db.GetRandomProduct();
+                    }
+                }
+            }
+
+            return MutatedBasket;
+        }
+
+        private double GetRandomNumber(double minimum, double maximum)
+        {
+            Random random = new Random();
+            return random.NextDouble() * (maximum - minimum) + minimum;
+        }
 
         #endregion
     }

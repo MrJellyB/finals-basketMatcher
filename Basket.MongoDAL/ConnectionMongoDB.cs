@@ -55,7 +55,7 @@ namespace Basket.ServerSide
         public List<ProductDTO> Products { get; set; }
 
         public List<StoreDTO> Stores { get; set; }
-
+        public List<long> BarkodListIds { get; set; }
 
         #endregion
 
@@ -95,7 +95,22 @@ namespace Basket.ServerSide
             {
                 this.Stores = this.GetAllStores();
             }
+
+            if (this.BarkodListIds != null)
+            {
+                this.BarkodListIds = this.GetAllProductsIds();
+            }
         }
+        private List<long> GetAllProductsIds()
+        {
+            List<long> lstIds = new List<long>();
+            foreach (var item in this.Products)
+            {
+                lstIds.Add(item.id);
+            }
+            return lstIds;
+        }
+
         public void queryOnProduct()
         {
             List<GenderDTO> dataGender = genderCollection.AsQueryable<GenderDTO>().ToList();
@@ -111,6 +126,12 @@ namespace Basket.ServerSide
         {
             ProductDTO dataProduct = productCollection.AsQueryable<ProductDTO>().Where(x => x.id == p_productId).FirstOrDefault();
             return dataProduct;
+        }
+
+        public BasketItemsDTO GetRandomProduct()
+        {
+            List<BasketDTO> RandomBasket = this.GenerateRandomBasket(1, 1, 1);
+            return RandomBasket.FirstOrDefault().basketItems.FirstOrDefault();
         }
 
         public List<GenderDTO> GetAllGenders()
