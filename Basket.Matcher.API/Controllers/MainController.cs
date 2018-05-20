@@ -63,6 +63,8 @@ namespace finals_basketMatch
                 }
             }
 
+            Population.IdialBaskets.BasketObject.streetName = db.GetStoreByUser(p_strUserName).Address;
+
             return Ok(Population.IdialBaskets);
         }
 

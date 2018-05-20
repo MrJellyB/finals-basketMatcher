@@ -27,6 +27,7 @@ namespace Basket.ServerSide
             UserDTO user = db.GetUserDTOByUserName("liormiz");
             List<UserDTO> users = db.GetAllUsersDTO(); //test
             float max = db.GetMaxPrice();
+            StoreDTO strStore = db.GetStoreByUser("ABCD");  
         }
     }
 }

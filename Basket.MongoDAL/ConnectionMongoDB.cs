@@ -55,6 +55,9 @@ namespace Basket.ServerSide
         public List<ProductDTO> Products { get; set; }
 
         public List<StoreDTO> Stores { get; set; }
+
+        public List<CityDTO> Cities { get; set; }
+
         public List<long> BarkodListIds { get; set; }
 
         #endregion
@@ -94,6 +97,11 @@ namespace Basket.ServerSide
             if(this.Stores == null)
             {
                 this.Stores = this.GetAllStores();
+            }
+
+            if (this.Cities == null)
+            {
+                this.Cities = this.GetAllCitiesDTO();
             }
 
             if (this.BarkodListIds != null)
@@ -144,6 +152,34 @@ namespace Basket.ServerSide
         {
             GenderDTO dataProduct = genderCollection.AsQueryable<GenderDTO>().Where(x => x.id == p_genderId).FirstOrDefault();
             return dataProduct;
+        }
+
+        public StoreDTO GetStoreByCity(string p_strCity)
+        {
+            List<StoreDTO> lstStores = this.Stores.Where(x => x.City == p_strCity).ToList();
+            return lstStores.FirstOrDefault();
+        }
+
+        public StoreDTO GetStoreByUser(string strUserName)
+        {
+            StoreDTO strToReturn = null;
+            UserDTO userUser = this.GetUserDTOByUserName(strUserName);
+            int? cityCode = userUser.profile.address.city;
+            if (cityCode.HasValue)
+            {
+                CityDTO city = this.Cities.Where(x => x._id == cityCode.Value).FirstOrDefault();
+                if (city != null)
+                {
+                    strToReturn = this.GetStoreByCity(city.cityName);
+                }
+            }
+
+            if (strToReturn == null)
+            {
+                strToReturn = this.Stores.FirstOrDefault();
+            }
+
+            return strToReturn;
         }
 
         public CategoryDTO GetCategoryDTOById(long p_category)
