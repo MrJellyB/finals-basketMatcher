@@ -138,7 +138,7 @@ namespace Basket.Match.BL
             this.m_weights[valNum] = weight;
         }
 
-        public BasketListGenome BasketCrossover (BasketListGenome other)
+        public BasketListGenome BasketCrossover(BasketListGenome other)
         {
             long MinLength = Math.Min(this.m_basket.basketItems.Count, other.m_basket.basketItems.Count);
 
