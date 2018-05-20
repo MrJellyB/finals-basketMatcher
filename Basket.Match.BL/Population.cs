@@ -124,9 +124,17 @@ namespace Basket.Match.BL
                 TotalScore += (int)CurrElement.CurrentFitness;
             }
 
+            int GoCrossOver = (originalCount / 2);
+            if (GoCrossOver % 2 != 0)
+            {
+                GoCrossOver--;
+            }
+
+            int GoAsIs = originalCount - GoCrossOver;
+
             // Take 50% of the genes and use
             // TODO: Need to check this loop
-            while (NewGeneration.Count != (originalCount / 2))
+            while (NewGeneration.Count != GoAsIs)
             {
                 Random r = new Random();
                 int rInt = r.Next(0, TotalScore + 1);
