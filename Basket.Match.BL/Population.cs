@@ -19,10 +19,10 @@ namespace Basket.Match.BL
         private int m_currentGeneration = 1;
 
         // Initial populaitons
-        private List<BasketListGenome> m_genomes = new List<BasketListGenome>();
-        private List<BasketListGenome> m_genomesResults = new List<BasketListGenome>();
-        private List<BasketListGenome> m_genomesNextGen = new List<BasketListGenome>();
-        private List<BasketListGenome> m_genomeFamily = new List<BasketListGenome>();
+        public List<BasketListGenome> m_genomes = new List<BasketListGenome>();
+        public List<BasketListGenome> m_genomesResults = new List<BasketListGenome>();
+        public List<BasketListGenome> m_genomesNextGen = new List<BasketListGenome>();
+        public List<BasketListGenome> m_genomeFamily = new List<BasketListGenome>();
 
         #endregion
 
@@ -37,12 +37,12 @@ namespace Basket.Match.BL
         #region CTOR
 
         public Population(
-            int length, 
-            int crossOverPoint, 
-            int initialPop, 
-            int popLimit, 
-            float mutationFreq, 
-            float deathParam, 
+            int length,
+            int crossOverPoint,
+            int initialPop,
+            int popLimit,
+            float mutationFreq,
+            float deathParam,
             float reproductionParam,
             float[] weights)
         {
@@ -111,27 +111,29 @@ namespace Basket.Match.BL
             }
         }
 
-        private void DoCrossover(List<BasketListGenome> genes) // OREN
+
+        private List<BasketListGenome> DoCrossover(List<BasketListGenome> genes) // OREN
         {
             List<BasketListGenome> NewGeneration = new List<BasketListGenome>();
             int originalCount = genes.Count;
             int TotalScore = 0;
 
             // Sum total scores
-            foreach(BasketListGenome CurrElement in genes)
+            foreach (BasketListGenome CurrElement in genes)
             {
                 TotalScore += (int)CurrElement.CurrentFitness;
             }
 
             // Take 50% of the genes and use
-            while (NewGeneration.Count != (originalCount/2))
+            // TODO: Need to check this loop
+            while (NewGeneration.Count != (originalCount / 2))
             {
                 Random r = new Random();
                 int rInt = r.Next(0, TotalScore + 1);
                 int SumScore = 0;
 
                 // Sum curr score
-                foreach(BasketListGenome CurrElement in genes)
+                foreach (BasketListGenome CurrElement in genes)
                 {
                     SumScore += (int)CurrElement.CurrentFitness;
 
@@ -139,35 +141,33 @@ namespace Basket.Match.BL
                     if ((SumScore >= rInt) && (!NewGeneration.Contains(CurrElement)))
                     {
                         NewGeneration.Add(CurrElement);
-                    }
 
-                    break;
+                        break;
+                    }
                 }
             }
 
-            // Crossover couples
-            while (NewGeneration.Count != originalCount)
+            foreach(BasketListGenome CurrToRemove in NewGeneration)
             {
-                // Search first
-                foreach(BasketListGenome CurrElement1 in genes)
-                {
-                    // Check if we already have it.
-                    if (!NewGeneration.Contains(CurrElement1))
-                    {
-                        // Search second
-                        foreach(BasketListGenome CurrElement2 in genes)
-                        {
-                            // Check if we already have or if it is the same as the first.
-                            if ((!NewGeneration.Contains(CurrElement2)) && (!CurrElement1.Equals(CurrElement2)))
-                            {
-                                // Crossover in order to create new genome.
-                                BasketListGenome NewGenome = (BasketListGenome)CurrElement1.Crossover(CurrElement2);
-                                NewGeneration.Add(NewGenome);
-                            }
-                        }
-                    }
-                }
+                genes.Remove(CurrToRemove);
             }
+
+            List<Tuple<BasketListGenome, BasketListGenome>> lstCrossoverList = new List<Tuple<BasketListGenome, BasketListGenome>>();
+
+            for (int i=0; i < genes.Count-1; i+=2)
+            {
+                BasketListGenome CurrElement1 = genes[i];
+                BasketListGenome CurrElement2 = genes[i + 1];
+
+                BasketListGenome NewBasketGenome1 = CurrElement1.BasketCrossover(CurrElement2);
+                BasketListGenome NewBasketGenome2 = CurrElement1.BasketCrossover(CurrElement2);
+
+                NewGeneration.Add(NewBasketGenome1);
+                NewGeneration.Add(NewBasketGenome2);
+            }
+            
+            
+            return NewGeneration;
         }
 
         private void SaveBestBasket()
@@ -204,11 +204,11 @@ namespace Basket.Match.BL
             this.SaveBestBasket();
 
             List<BasketListGenome> lstGenomesToRemove = new List<BasketListGenome>();
-        
+
             // Check which of the genomes we need to kill
             foreach (BasketListGenome g in this.m_genomes)
             {
-                if(g.CanDie(this.m_deathParam))
+                if (g.CanDie(this.m_deathParam))
                 {
                     //this.m_genomes.Remove(g);
                     lstGenomesToRemove.Add(g);
@@ -217,7 +217,7 @@ namespace Basket.Match.BL
 
             // Lior M: Add collection to remove all te genomes that need to remove
             this.m_genomes.RemoveAll(x => lstGenomesToRemove.Contains(x));
-            
+
             if (this.m_genomesNextGen != null)
             {
                 // Now reproduce
@@ -232,24 +232,24 @@ namespace Basket.Match.BL
             // Check which genomes need to be reproduced
             foreach (BasketListGenome g in this.m_genomes)
             {
-                if(g.CanReproduce(this.m_reproduceParam))
+                if (g.CanReproduce(this.m_reproduceParam))
                 {
                     this.m_genomesNextGen.Add(g);
                 }
             }
 
-            DoCrossover(this.m_genomesNextGen);
+            this.m_genomes = DoCrossover(this.m_genomesNextGen);
 
-            // Check for mutations
-            foreach (Genome g in this.m_genomes)
-            {
-                Mutate(g);
-            }
+            //// Check for mutations
+            //foreach (Genome g in this.m_genomes)
+            //{
+            //    Mutate(g);
+            //}
 
 
         }
 
-        
+
 
         #endregion
     }

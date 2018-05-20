@@ -9,7 +9,7 @@ namespace Basket.Match.BL
 
         #region Data Members
 
-        private static Random s_seed;
+        private static Random s_seed= new Random();
         public static Random Seed
         {
             get { return s_seed;}
@@ -87,17 +87,32 @@ namespace Basket.Match.BL
         #region Private Methods
 
         // Exchanges gene values between two genes according to the CrossingPoint
-        private void CrossoverGeneValues(ref ListGenomes geneOne, ref ListGenomes geneTwo)
+        private ListGenomes CrossoverGeneValues(ref ListGenomes geneOne, ref ListGenomes geneTwo)
         {
-            for (int i = 0; i < this.CrossoverPoint; i++)
+            long MinLength = Math.Min(geneOne.Length, geneTwo.Length);
+
+            ListGenomes MinGen = geneOne;
+            ListGenomes MaxGen = geneTwo;
+
+            if (geneTwo.Length == MinLength)
             {
-                geneOne.List[i] = geneTwo.List[i];
+                MinGen = geneTwo;
+                MaxGen = geneOne;
             }
 
-            for (int i = this.CrossoverPoint; i < Length; i++)
+            for (int i = 0; i < this.CrossoverPoint; i++)
             {
-                geneTwo.List[i] = geneOne.List[i];
+                MinGen.List[i] = MaxGen.List[i];
             }
+
+
+            //// TODO: EXCEPTION.. NEED TO FIXED
+            //for (int i = this.CrossoverPoint; i < MinLength; i++)
+            //{
+            //    MinGen.List[i] = MaxGen.List[i];
+            //}
+
+            return MinGen;
         }
 
         #endregion
@@ -111,18 +126,18 @@ namespace Basket.Match.BL
             ListGenomes firstGene = new ListGenomes(g, originalGenome.Min, originalGenome.Max);
             ListGenomes secondGene = new ListGenomes((Genome)this, originalGenome.Min, originalGenome.Max);
             
-            CrossoverGeneValues(ref firstGene, ref secondGene);
+            return CrossoverGeneValues(ref firstGene, ref secondGene);
 
-            // Take the better gene that made out from the crossover, randomly
-            // TODO: Maybe change this check to fitness check
-            if (s_seed.Next(2) == 1)
-            {
-                return firstGene;
-            }
-            else
-            {
-                return secondGene;
-            }
+            //// Take the better gene that made out from the crossover, randomly
+            //// TODO: Maybe change this check to fitness check
+            //if (s_seed.Next(2) == 1)
+            //{
+            //    return firstGene;
+            //}
+            //else
+            //{
+            //    return secondGene;
+            //}
         }
 
         public override double FitnessFunction()

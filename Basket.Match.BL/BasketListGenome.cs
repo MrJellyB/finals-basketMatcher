@@ -98,11 +98,14 @@ namespace Basket.Match.BL
         //    }
         //}
 
-        public BasketListGenome(BasketDTO basket) : base(basket.basketItems, 0, 1)
+        public BasketListGenome(BasketDTO basket, int n_CrossOverPoint) : base(basket.basketItems, 0, 1)
         {
             this.m_weights = new double[basket.basketItems.Count];
             this.m_weights[0] = 1;
             this.m_basket = basket;
+            this.CrossoverPoint = n_CrossOverPoint;
+            this.Length = basket.basketItems.Count;
+
 
             // Default weights
             for (int i = 1; i < m_weights.Length; i++)
@@ -133,6 +136,30 @@ namespace Basket.Match.BL
             }
 
             this.m_weights[valNum] = weight;
+        }
+
+        public BasketListGenome BasketCrossover (BasketListGenome other)
+        {
+            long MinLength = Math.Min(this.m_basket.basketItems.Count, other.m_basket.basketItems.Count);
+
+            int CrossPoint = Seed.Next((int)MinLength);
+
+            BasketListGenome MinGen = this;
+            BasketListGenome MaxGen = other;
+
+            if (other.Length == MinLength)
+            {
+                MinGen = other;
+                MaxGen = this;
+            }
+
+            for (int i = 0; i < CrossPoint; i++)
+            {
+                MinGen.m_basket.basketItems[i] = MaxGen.m_basket.basketItems[i];
+            }
+
+
+            return MinGen;
         }
 
         public override double FitnessFunction()

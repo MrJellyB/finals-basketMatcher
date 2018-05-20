@@ -14,15 +14,13 @@ namespace finals_basketMatch
     {
         #region Consts
 
-        public const int NUMBER_OF_BASKETS = 10;
-        public const int FROM_PRODUCTS = 1;
+        public const int NUMBER_OF_BASKETS = 12;
+        public const int FROM_PRODUCTS = 5;
         public const int TO_PRODUCTS = 10;
         public const float MUTATION_PRECENT = 0.02f;
         public const int NUM_OF_GENERATION = 2;
-        //public const float MIN_FITNESS = 400;
-        public const float MIN_FITNESS = 180;
-        //public const float MAX_FITNESS = 900;
-        public const float MAX_FITNESS = 300;
+        public const float MIN_FITNESS = 0;
+        public const float MAX_FITNESS = 0;
 
         public int enumFitnessSize = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
 
@@ -58,6 +56,11 @@ namespace finals_basketMatch
             for (int i=0; i < NUM_OF_GENERATION; i++)
             {
                 AllPopulation.NextGen();
+
+                foreach (BasketListGenome Curr in AllPopulation.m_genomes)
+                {
+                    this.CalcFitness(Curr, Wights);
+                }
             }
 
             return Ok(Population.IdialBaskets);
@@ -204,31 +207,15 @@ namespace finals_basketMatch
 
             foreach (BasketDTO CurrBasket in listBaskets)
             {
-                BasketListGenome BasketGenomObject = new BasketListGenome(CurrBasket);
-                //BasketGenomObject.BasketObject = CurrBasket;
-                BasketGenomObject.UserName = p_strUserName;
-
-                // init the matrix
-                float[][] Matrix = new float[CurrBasket.GetBasketItemCount()][];
-
-                
-                for (int i = 0; i < Matrix.Length; i++)
-                {
-                    Matrix[i] = new float[enumFitnessSize];
-                }
-
-                BasketGenomObject.MakeBasketMatrix(ref Matrix);
-                float[] Params = BasketGenomObject.GetBasketNormalizedParams(Matrix);
-
-                float Grade = BasketGenomObject.FitnessFunction(Params, Wights);
-
+;
+                BasketListGenome BasketGenomObject = this.GetBasketGenomeWithFitness(CurrBasket, p_strUserName, Wights);
                 Generation.Add(BasketGenomObject);
             }
 
             return new Population(
                         Generation, 
-                        NUMBER_OF_BASKETS, 
-                        NUMBER_OF_BASKETS/2, 
+                        NUMBER_OF_BASKETS,
+                        FROM_PRODUCTS / 2, 
                         NUMBER_OF_BASKETS, 
                         NUMBER_OF_BASKETS,
                         MUTATION_PRECENT, 
@@ -236,5 +223,38 @@ namespace finals_basketMatch
                         MAX_FITNESS, 
                         Wights);
         }
-    }
+
+        private BasketListGenome GetBasketGenomeWithFitness(BasketDTO CurrBasket, string p_strUserName, float[] Wights)
+        {
+            BasketListGenome BasketGenomObject = new BasketListGenome(CurrBasket, (FROM_PRODUCTS / 2));
+
+            if (p_strUserName != null)
+            {
+                BasketGenomObject.UserName = p_strUserName;
+            }
+
+            this.CalcFitness(BasketGenomObject, Wights);
+
+            return BasketGenomObject;
+        }
+
+        private BasketListGenome CalcFitness(BasketListGenome BasketGenomObject, float[] Wights)
+        {
+            // init the matrix
+            float[][] Matrix = new float[BasketGenomObject.BasketObject.basketItems.Count][];
+
+
+            for (int i = 0; i < Matrix.Length; i++)
+            {
+                Matrix[i] = new float[enumFitnessSize];
+            }
+
+            BasketGenomObject.MakeBasketMatrix(ref Matrix);
+            float[] Params = BasketGenomObject.GetBasketNormalizedParams(Matrix);
+
+            float Grade = BasketGenomObject.FitnessFunction(Params, Wights);
+
+            return BasketGenomObject;
+        }
+     }
 }
