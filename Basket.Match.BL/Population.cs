@@ -183,24 +183,20 @@ namespace Basket.Match.BL
 
         private void SaveBestBasket()
         {
-            BasketListGenome BestBasket = null;
-
             foreach (BasketListGenome basketGenome in this.m_genomes)
             {
-                if (BestBasket == null)
+                if (IdialBaskets == null)
                 {
-                    BestBasket = basketGenome;
+                    IdialBaskets = basketGenome;
                 }
                 else if (basketGenome != null)
                 {
-                    if (BestBasket.CurrentFitness < basketGenome.CurrentFitness)
+                    if (IdialBaskets.CurrentFitness < basketGenome.CurrentFitness)
                     {
-                        BestBasket = basketGenome;
+                        IdialBaskets = basketGenome;
                     }
                 }
             }
-
-            IdialBaskets = BestBasket;
         }
 
         #endregion
