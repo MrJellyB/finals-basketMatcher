@@ -273,7 +273,7 @@ namespace Basket.Match.BL
 
             for (int i = 0; i < mat.Length; i++)
             {
-                ProductDTO productItem = db.GetProductDTOByProductId(products[i].id);
+                ProductDTO productItem = db.GetProductDTONotFromDBByProductId(products[i].id);
 
                 FillProduct(ref mat, i, productItem, db);
             }
