@@ -5,6 +5,7 @@ using Basket.ServerSide;
 using Basket.Match.BL;
 using Basket.Common.Enums;
 using System;
+using Microsoft.AspNetCore.Cors;
 
 namespace finals_basketMatch
 {
@@ -14,11 +15,11 @@ namespace finals_basketMatch
     {
         #region Consts
 
-        public const int NUMBER_OF_BASKETS = 1000;
+        public const int NUMBER_OF_BASKETS = 10;
         public const int FROM_PRODUCTS = 10;
         public const int TO_PRODUCTS = 30;
         public const float MUTATION_PRECENT = 0.02f;
-        public const int NUM_OF_GENERATION = 10;
+        public const int NUM_OF_GENERATION = 2;
         public const float MIN_FITNESS = 0;
         public const float MAX_FITNESS = 0;
 
