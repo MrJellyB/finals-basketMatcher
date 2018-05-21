@@ -136,6 +136,11 @@ namespace Basket.ServerSide
             return dataProduct;
         }
 
+        public ProductDTO GetProductDTONotFromDBByProductId(long p_productId)
+        {
+            return this.Products.Where(x => x.id == p_productId).FirstOrDefault();
+        }
+
         public BasketItemsDTO GetRandomProduct()
         {
             List<BasketDTO> RandomBasket = this.GenerateRandomBasket(1, 1, 1);

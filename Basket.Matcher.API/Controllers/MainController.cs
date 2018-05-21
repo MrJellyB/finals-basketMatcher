@@ -14,11 +14,11 @@ namespace finals_basketMatch
     {
         #region Consts
 
-        public const int NUMBER_OF_BASKETS = 30;
-        public const int FROM_PRODUCTS = 8;
-        public const int TO_PRODUCTS = 15;
+        public const int NUMBER_OF_BASKETS = 100;
+        public const int FROM_PRODUCTS = 10;
+        public const int TO_PRODUCTS = 30;
         public const float MUTATION_PRECENT = 0.02f;
-        public const int NUM_OF_GENERATION = 6;
+        public const int NUM_OF_GENERATION = 10;
         public const float MIN_FITNESS = 0;
         public const float MAX_FITNESS = 0;
 
