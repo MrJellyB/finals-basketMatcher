@@ -164,13 +164,18 @@ namespace Basket.ServerSide
         {
             StoreDTO strToReturn = null;
             UserDTO userUser = this.GetUserDTOByUserName(strUserName);
-            int? cityCode = userUser.profile.address.city;
-            if (cityCode.HasValue)
+            if (userUser != null && 
+                userUser.profile != null &&
+                userUser.profile.address != null)
             {
-                CityDTO city = this.Cities.Where(x => x._id == cityCode.Value).FirstOrDefault();
-                if (city != null)
+                int? cityCode = userUser.profile.address.city;
+                if (cityCode.HasValue)
                 {
-                    strToReturn = this.GetStoreByCity(city.cityName);
+                    CityDTO city = this.Cities.Where(x => x._id == cityCode.Value).FirstOrDefault();
+                    if (city != null)
+                    {
+                        strToReturn = this.GetStoreByCity(city.cityName);
+                    }
                 }
             }
 
