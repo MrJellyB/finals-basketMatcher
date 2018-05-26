@@ -46,7 +46,7 @@ namespace finals_basketMatch
         [HttpGet("{p_strUserName}", Name = "GetUltimateBasketByUser")]
         public IActionResult GetUltimateBasketByUser(string p_strUserName)
         {
-            Program.storeDataLocally(db, p_strUserName);
+            //Program.storeDataLocally(db, p_strUserName);
 
             // step 1: generates 1000 baskets
             List<BasketDTO> listBaskets = this.db.GenerateRandomBasket(NUMBER_OF_BASKETS, FROM_PRODUCTS, TO_PRODUCTS);

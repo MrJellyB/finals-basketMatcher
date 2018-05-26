@@ -268,8 +268,8 @@ namespace Basket.Match.BL
                     if (this.GetRandomNumber(0, 1) <= this.m_mutationFreq)
                     {
                         // TODO: DB access
-                        // MutatedBasket.BasketObject.basketItems[i] = db.GetRandomProduct();
-                        MutatedBasket.BasketObject.basketItems[i] = Program.GetRandomProduct();
+                        MutatedBasket.BasketObject.basketItems[i] = db.GetRandomProduct();
+                        //MutatedBasket.BasketObject.basketItems[i] = Program.GetRandomProduct();
                     }
                 }
             }

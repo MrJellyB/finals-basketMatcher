@@ -66,20 +66,20 @@ namespace Basket.ServerSide
             }
         }
 
-        public static void storeDataLocally(ConnectionMongoDB db, string username)
-        {
-            if (Prodcuts.Count == 0)
-            {
-                List<ProductDTO> allProducts = db.GetAllProductDTO();
-                foreach (var product in allProducts)
-                    Prodcuts.Add(product.id, product);
-            }
+        //public static void storeDataLocally(ConnectionMongoDB db, string username)
+        //{
+        //    if (Prodcuts.Count == 0)
+        //    {
+        //        List<ProductDTO> allProducts = db.GetAllProductDTO();
+        //        foreach (var product in allProducts)
+        //            Prodcuts.Add(product.id, product);
+        //    }
 
-            if (OldBasketsPerUser.ContainsKey(username))
-                OldBasketsPerUser[username] = db.GetListBasketByUserName(username);
-            else
-                OldBasketsPerUser.Add(username, db.GetListBasketByUserName(username));
-        }
+        //    if (OldBasketsPerUser.ContainsKey(username))
+        //        OldBasketsPerUser[username] = db.GetListBasketByUserName(username);
+        //    else
+        //        OldBasketsPerUser.Add(username, db.GetListBasketByUserName(username));
+        //}
 
         private static readonly Random getrandom = new Random();
 
