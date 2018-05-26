@@ -15,7 +15,7 @@ namespace finals_basketMatch
     {
         #region Consts
 
-        public const int NUMBER_OF_BASKETS = 100;
+        public const int NUMBER_OF_BASKETS = 1000;
         public const int FROM_PRODUCTS = 10;
         public const int TO_PRODUCTS = 30;
         public const float MUTATION_PRECENT = 0.02f;
