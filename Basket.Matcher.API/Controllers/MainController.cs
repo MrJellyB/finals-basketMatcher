@@ -15,11 +15,11 @@ namespace finals_basketMatch
     {
         #region Consts
 
-        public const int NUMBER_OF_BASKETS = 10;
+        public const int NUMBER_OF_BASKETS = 100;
         public const int FROM_PRODUCTS = 10;
         public const int TO_PRODUCTS = 30;
         public const float MUTATION_PRECENT = 0.02f;
-        public const int NUM_OF_GENERATION = 2;
+        public const int NUM_OF_GENERATION = 150;
         public const float MIN_FITNESS = 0;
         public const float MAX_FITNESS = 0;
 
@@ -46,6 +46,8 @@ namespace finals_basketMatch
         [HttpGet("{p_strUserName}", Name = "GetUltimateBasketByUser")]
         public IActionResult GetUltimateBasketByUser(string p_strUserName)
         {
+            Program.storeDataLocally(db, p_strUserName);
+
             // step 1: generates 1000 baskets
             List<BasketDTO> listBaskets = this.db.GenerateRandomBasket(NUMBER_OF_BASKETS, FROM_PRODUCTS, TO_PRODUCTS);
             enumFitnessSize = Enum.GetNames(typeof(eFitnessFunctionParams)).Length;
@@ -210,10 +212,11 @@ namespace finals_basketMatch
 
             foreach (BasketDTO CurrBasket in listBaskets)
             {
-;
                 BasketListGenome BasketGenomObject = this.GetBasketGenomeWithFitness(CurrBasket, p_strUserName, Wights);
                 Generation.Add(BasketGenomObject);
             }
+
+            Population.IdialBaskets = null;
 
             return new Population(
                         Generation, 

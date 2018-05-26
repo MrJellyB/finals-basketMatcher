@@ -92,7 +92,7 @@ namespace Basket.Match.BL
             BasketListGenome MinGen = this;
             BasketListGenome MaxGen = other;
 
-            if (other.Length == MinLength)
+            if (other.m_basket.basketItems.Count == MinLength)
             {
                 MinGen = other;
                 MaxGen = this;
@@ -273,7 +273,9 @@ namespace Basket.Match.BL
 
             for (int i = 0; i < mat.Length; i++)
             {
-                ProductDTO productItem = db.GetProductDTONotFromDBByProductId(products[i].id);
+                // TODO: DB access
+                // productItem = db.GetProductDTONotFromDBByProductId(products[i].id);
+                ProductDTO productItem = Program.Prodcuts[products[i].id];
 
                 FillProduct(ref mat, i, productItem, db);
             }
@@ -333,8 +335,9 @@ namespace Basket.Match.BL
                 mat[i][(int)eFitnessFunctionParams.IsSoy] = FALSE;
             }
 
-            List<BasketDTO> allBaskets = DbConnection.GetListBasketByUserName(this.UserName);
-
+            // TODO: DB Access
+            //List<BasketDTO> allBaskets = DbConnection.GetListBasketByUserName(this.UserName);
+            List<BasketDTO> allBaskets = Program.OldBasketsPerUser[this.UserName];
 
             int productCounter = 0;
 
