@@ -52,13 +52,17 @@ namespace Basket.ServerSide
 
         public MongoCollection<StoreDTO> storeCollection { get; set; }
 
-        public List<ProductDTO> Products { get; set; }
+        public Dictionary<long, ProductDTO> Products { get; set; }
+
+        public List<long> ProductsKeys { get; set; }
 
         public List<StoreDTO> Stores { get; set; }
 
         public List<CityDTO> Cities { get; set; }
 
         public List<long> BarkodListIds { get; set; }
+
+        public Dictionary<string, List<BasketDTO>> OldBasketsPerUser { get; set; }
 
         #endregion
 
@@ -76,25 +80,21 @@ namespace Basket.ServerSide
             // get collection values
             this.GetData();
         }
+
         public void GetCollectionsValues()
         {
-            this.genderCollection = database.GetCollection<GenderDTO>(GENDER_NAME_COLLECTION);
             this.productCollection = database.GetCollection<ProductDTO>(PRODUCT_NAME_COLLECTION);
+            this.genderCollection = database.GetCollection<GenderDTO>(GENDER_NAME_COLLECTION);
             this.categoryCollection = database.GetCollection<CategoryDTO>(CATEGORY_NAME_COLLECTION);
             this.basketCollection = database.GetCollection<BasketDTO>(BASKET_NAME_COLLECTION);
             this.cityCollection = database.GetCollection<CityDTO>(CITY_NAME_COLLECTION);
-            this.userCollection = database.GetCollection<UserDTO>(USERS_NAME_COLLECTION);
             this.storeCollection = database.GetCollection<StoreDTO>(STORE_NAME_COLLECTION);
+            this.userCollection = database.GetCollection<UserDTO>(USERS_NAME_COLLECTION);
         }
 
         public void GetData()
         {
-            if (this.Products == null)
-            {
-                this.Products = this.GetAllProductDTO();
-            }
-
-            if(this.Stores == null)
+            if (this.Stores == null)
             {
                 this.Stores = this.GetAllStores();
             }
@@ -104,19 +104,32 @@ namespace Basket.ServerSide
                 this.Cities = this.GetAllCitiesDTO();
             }
 
-            if (this.BarkodListIds != null)
+            if (this.Products == null)
             {
-                this.BarkodListIds = this.GetAllProductsIds();
+                this.Products = new Dictionary<long, ProductDTO>();
+                this.ProductsKeys = new List<long>();
+
+                List<ProductDTO> allProducts = this.GetAllProductDTO();
+                foreach (var product in allProducts)
+                {
+                    this.Products.Add(product.id, product);
+                    this.ProductsKeys.Add(product.id);
+                }
             }
-        }
-        private List<long> GetAllProductsIds()
-        {
-            List<long> lstIds = new List<long>();
-            foreach (var item in this.Products)
+
+            if (this.OldBasketsPerUser == null)
             {
-                lstIds.Add(item.id);
+                this.OldBasketsPerUser = new Dictionary<string, List<BasketDTO>>();
+                List<BasketDTO> allBaskets = this.GetAllBasketsDTO();
+
+                foreach (var basket in allBaskets)
+                {
+                    if (!OldBasketsPerUser.ContainsKey(basket.userName))
+                        OldBasketsPerUser.Add(basket.userName, new List<BasketDTO>());
+
+                    OldBasketsPerUser[basket.userName].Add(basket);
+                }
             }
-            return lstIds;
         }
 
         public void queryOnProduct()
@@ -136,10 +149,26 @@ namespace Basket.ServerSide
             return dataProduct;
         }
 
+        public ProductDTO GetProductDTONotFromDBByProductId(long p_productId)
+        {
+            //return this.Products.Where(x => x.id == p_productId).FirstOrDefault();
+            return this.Products[p_productId];
+        }
+
         public BasketItemsDTO GetRandomProduct()
         {
-            List<BasketDTO> RandomBasket = this.GenerateRandomBasket(1, 1, 1);
-            return RandomBasket.FirstOrDefault().basketItems.FirstOrDefault();
+            //List<BasketDTO> RandomBasket = this.GenerateRandomBasket(1, 1, 1);
+            //return RandomBasket.FirstOrDefault().basketItems.FirstOrDefault();
+            int nProductIndex = this.GetRandomNumber(0, this.ProductsKeys.Count - 1);
+            ProductDTO randomProduct = this.Products[this.ProductsKeys[nProductIndex]];
+            BasketItemsDTO item = new BasketItemsDTO();
+            item.id = randomProduct.id;
+            item.image = "";
+            item.name = randomProduct.name;
+            item.price = randomProduct.price;
+            item.amount = this.GetRandomNumber(1, 3);
+
+            return item;
         }
 
         public List<GenderDTO> GetAllGenders()
@@ -164,13 +193,18 @@ namespace Basket.ServerSide
         {
             StoreDTO strToReturn = null;
             UserDTO userUser = this.GetUserDTOByUserName(strUserName);
-            int? cityCode = userUser.profile.address.city;
-            if (cityCode.HasValue)
+            if (userUser != null &&
+                userUser.profile != null &&
+                userUser.profile.address != null)
             {
-                CityDTO city = this.Cities.Where(x => x._id == cityCode.Value).FirstOrDefault();
-                if (city != null)
+                int? cityCode = userUser.profile.address.city;
+                if (cityCode.HasValue)
                 {
-                    strToReturn = this.GetStoreByCity(city.cityName);
+                    CityDTO city = this.Cities.Where(x => x._id == cityCode.Value).FirstOrDefault();
+                    if (city != null)
+                    {
+                        strToReturn = this.GetStoreByCity(city.cityName);
+                    }
                 }
             }
 
@@ -202,8 +236,13 @@ namespace Basket.ServerSide
 
         public List<BasketDTO> GetListBasketByUserName(string p_strUserName)
         {
-            List<BasketDTO> data = basketCollection.AsQueryable<BasketDTO>().Where(x => x.userName == p_strUserName).ToList();
-            return data;
+            //List<BasketDTO> data = basketCollection.AsQueryable<BasketDTO>().Where(x => x.userName == p_strUserName).ToList();
+            ///return data;
+            ///
+            if (this.OldBasketsPerUser.Keys.Contains(p_strUserName))
+                return this.OldBasketsPerUser[p_strUserName];
+
+            return new List<BasketDTO>();
         }
 
         public List<CityDTO> GetAllCitiesDTO()
@@ -237,7 +276,7 @@ namespace Basket.ServerSide
 
             if (this.Products != null)
             {
-                currProduct = this.Products.OrderByDescending(x => x.price).FirstOrDefault();
+                currProduct = this.Products.Values.OrderByDescending(x => x.price).FirstOrDefault();
             }
             if (currProduct != null)
             {
@@ -263,8 +302,8 @@ namespace Basket.ServerSide
 
                 for (int jIndex = 0; jIndex < nCountOfProducts; jIndex++)
                 {
-                    int nProductIndex = this.GetRandomNumber(0, this.Products.Count - 1);
-                    ProductDTO currProduct = this.Products[nProductIndex];
+                    int nProductIndex = this.GetRandomNumber(0, this.ProductsKeys.Count - 1);
+                    ProductDTO currProduct = this.Products[this.ProductsKeys[nProductIndex]];
                     BasketItemsDTO item = new BasketItemsDTO();
                     item.id = currProduct.id;
                     item.image = "";

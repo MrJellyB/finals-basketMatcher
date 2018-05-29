@@ -33,7 +33,7 @@ namespace Basket.Match.BL
 
         // TODO: Change this to list later
         //public static List<BasketListGenome> IdialBaskets;
-        public static BasketListGenome IdialBaskets;
+        public static BasketListGenome IdialBaskets = null;
 
         #endregion
 
@@ -210,40 +210,40 @@ namespace Basket.Match.BL
             // Save the best
             this.SaveBestBasket();
 
-            List<BasketListGenome> lstGenomesToRemove = new List<BasketListGenome>();
+            //List<BasketListGenome> lstGenomesToRemove = new List<BasketListGenome>();
 
-            // Check which of the genomes we need to kill
-            foreach (BasketListGenome g in this.m_genomes)
-            {
-                if (g.CanDie(this.m_deathParam))
-                {
-                    //this.m_genomes.Remove(g);
-                    lstGenomesToRemove.Add(g);
-                }
-            }
+            //// Check which of the genomes we need to kill
+            //foreach (BasketListGenome g in this.m_genomes)
+            //{
+            //    if (g.CanDie(this.m_deathParam))
+            //    {
+            //        //this.m_genomes.Remove(g);
+            //        lstGenomesToRemove.Add(g);
+            //    }
+            //}
 
-            // Lior M: Add collection to remove all te genomes that need to remove
-            this.m_genomes.RemoveAll(x => lstGenomesToRemove.Contains(x));
+            //// Lior M: Add collection to remove all te genomes that need to remove
+            //this.m_genomes.RemoveAll(x => lstGenomesToRemove.Contains(x));
 
-            if (this.m_genomesNextGen != null)
-            {
-                // Now reproduce
-                this.m_genomesNextGen.Clear();
-            }
-            if (m_genomesResults != null)
-            {
-                // Now reproduce
-                this.m_genomesResults.Clear();
-            }
+            //if (this.m_genomesNextGen != null)
+            //{
+            //    // Now reproduce
+            //    this.m_genomesNextGen.Clear();
+            //}
+            //if (m_genomesResults != null)
+            //{
+            //    // Now reproduce
+            //    this.m_genomesResults.Clear();
+            //}
 
-            // Check which genomes need to be reproduced
-            foreach (BasketListGenome g in this.m_genomes)
-            {
-                if (g.CanReproduce(this.m_reproduceParam))
-                {
-                    this.m_genomesNextGen.Add(g);
-                }
-            }
+            //// Check which genomes need to be reproduced
+            //foreach (BasketListGenome g in this.m_genomes)
+            //{
+            //    if (g.CanReproduce(this.m_reproduceParam))
+            //    {
+            //        this.m_genomesNextGen.Add(g);
+            //    }
+            //}
 
             this.m_genomes = DoCrossover(this.m_genomesNextGen);
 
@@ -267,7 +267,9 @@ namespace Basket.Match.BL
                 {
                     if (this.GetRandomNumber(0, 1) <= this.m_mutationFreq)
                     {
+                        // TODO: DB access
                         MutatedBasket.BasketObject.basketItems[i] = db.GetRandomProduct();
+                        //MutatedBasket.BasketObject.basketItems[i] = Program.GetRandomProduct();
                     }
                 }
             }
