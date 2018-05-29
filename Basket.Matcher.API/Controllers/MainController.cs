@@ -42,7 +42,13 @@ namespace finals_basketMatch
 
         #endregion
 
-        [HttpGet("{p_strUserName}", Name = "GetUltimateBasketByUser")]
+        [HttpGet("index")]
+        public IActionResult Index()
+        {
+            return Ok("hello world");
+        }
+
+        [HttpGet("GetBasket/{p_strUserName}")]
         public IActionResult GetUltimateBasketByUser(string p_strUserName)
         {
             // step 1: generates 1000 baskets
